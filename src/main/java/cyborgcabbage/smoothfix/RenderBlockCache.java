@@ -17,7 +17,7 @@ final public class RenderBlockCache {
     private int offsetZ = Integer.MAX_VALUE;
     private Block block;
     private IBlockAccess access;
-
+    //Test
     public void setupCache(Block block, IBlockAccess access, int x, int y, int z){
         if(x != offsetX || y != offsetY || z != offsetZ || this.block != block || this.access != access) {
             this.block = block;
