@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "smoothfix",
+  "version": "${version}",
+
+  "name": "Example Mod",
+  "description": "Fixes that funky smooth lighting bug",
+  "authors": [
+    "CyborgCabbage",
+    "Turnip Labs (Template)"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "MIT",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+        "cyborgcabbage.smoothfix.SmoothFix"
+    ]
+  },
+  "mixins": [
+      "smoothfix.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.13.3"
+  },
+  "suggests": {
+  }
+}
