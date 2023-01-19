@@ -2,27 +2,17 @@
   "schemaVersion": 1,
   "id": "smoothfix",
   "version": "${version}",
-
-  "name": "Example Mod",
+  "name": "Smooth Fix",
   "description": "Makes smooth lighting look better",
   "authors": [
     "CyborgCabbage",
     "Turnip Labs (Template)"
   ],
-  "contact": {
-    "homepage": "",
-    "sources": ""
-  },
-
   "license": "MIT",
-
   "environment": "client",
-  "entrypoints": {
-  },
   "mixins": [
       "smoothfix.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.13.3"
   }
