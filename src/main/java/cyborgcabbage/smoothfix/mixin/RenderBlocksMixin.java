@@ -1,12 +1,14 @@
 package cyborgcabbage.smoothfix.mixin;
 
 import cyborgcabbage.smoothfix.RenderBlockCache;
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.RenderBlocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = RenderBlocks.class, remap = false)
 public abstract class RenderBlocksMixin {
@@ -37,6 +39,7 @@ public abstract class RenderBlocksMixin {
     @Shadow public abstract void renderWestFace(Block block, double d, double d1, double d2, int i);
     @Shadow public abstract void renderSouthFace(Block block, double d, double d1, double d2, int i);
 
+    @Shadow private World world;
     RenderBlockCache cache = new RenderBlockCache();
     /**
      * @author CyborgCabbage
@@ -216,5 +219,43 @@ public abstract class RenderBlocksMixin {
             }
         }
         return rendered;
+    }
+
+    private void waterSmoothLight(Block block, int x, int y, int z, int xo, int zo) {
+        int color = block.colorMultiplier(this.world, this.blockAccess, x, y, z);
+        float colorRed = (float)(color >> 16 & 255) / 255.0F;
+        float colorGreen = (float)(color >> 8 & 255) / 255.0F;
+        float colorBlue = (float)(color & 255) / 255.0F;
+        float l0 = block.getBlockBrightness(this.blockAccess, x, y, z);
+        float l1 = block.getBlockBrightness(this.blockAccess, x+xo, y, z);
+        float l2 = block.getBlockBrightness(this.blockAccess, x, y, z+zo);
+        float l3;
+        if(Block.opaqueCubeLookup[world.getBlockId(x+xo,y,z)] && Block.opaqueCubeLookup[world.getBlockId(x,y,z+zo)]){
+            l3 = l1;
+        }else{
+            l3 = block.getBlockBrightness(this.blockAccess, x+xo, y, z+zo);
+        }
+        float l = (l0+l1+l2+l3)/4.f;
+        Tessellator.instance.setColorOpaque_F(l*colorRed, l*colorGreen, l*colorBlue);
+    }
+
+    @Inject(method="renderBlockFluids",at=@At(value="INVOKE", target="Lnet/minecraft/src/Tessellator;addVertexWithUV(DDDDD)V", ordinal = 0))
+    private void wak(Block block, int x, int y, int z, CallbackInfoReturnable<Boolean> cir){//00
+        if(Minecraft.isAmbientOcclusionEnabled()) waterSmoothLight(block, x, y, z, -1, -1);
+    }
+
+    @Inject(method="renderBlockFluids",at=@At(value="INVOKE", target="Lnet/minecraft/src/Tessellator;addVertexWithUV(DDDDD)V", ordinal = 1))
+    private void wak1(Block block, int x, int y, int z, CallbackInfoReturnable<Boolean> cir){//01
+        if(Minecraft.isAmbientOcclusionEnabled()) waterSmoothLight(block, x, y, z, -1, 1);
+    }
+
+    @Inject(method="renderBlockFluids",at=@At(value="INVOKE", target="Lnet/minecraft/src/Tessellator;addVertexWithUV(DDDDD)V", ordinal = 2))
+    private void wak2(Block block, int x, int y, int z, CallbackInfoReturnable<Boolean> cir){//11
+        if(Minecraft.isAmbientOcclusionEnabled()) waterSmoothLight(block, x, y, z, 1, 1);
+    }
+
+    @Inject(method="renderBlockFluids",at=@At(value="INVOKE", target="Lnet/minecraft/src/Tessellator;addVertexWithUV(DDDDD)V", ordinal = 3))
+    private void wak3(Block block, int x, int y, int z, CallbackInfoReturnable<Boolean> cir){//10
+        if(Minecraft.isAmbientOcclusionEnabled()) waterSmoothLight(block, x, y, z, 1, -1);
     }
 }
