@@ -7,7 +7,8 @@
     ],
     "client": [
         "RenderBlocksMixin",
-        "RenderPaintingMixin"
+        "RenderPaintingMixin",
+        "EntityRendererMixin"
     ],
     "injectors": {
         "defaultRequire": 1
