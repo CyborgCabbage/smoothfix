@@ -1,3 +1,4 @@
+Archived because its changes are now in BTA.
 ## SmoothFix
 
 Fixes smooth lighting on fences and stairs.
